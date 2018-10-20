@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <title>test</title>
+</head>
+
+<body>
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script> -->
+    <p>
+        javascript:(function(){var jsCode = document.createElement('script');jsCode.setAttribute('type','module');jsCode.setAttribute('src', 'https://knicknic.github.io/croppy/add_webtoon_croppy.js');document.body.appendChild(jsCode);}());
+    </p>
+    <script type='module'>
+
+        import * as Magick from './magickApi.js';
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js', {
+          updateViaCache: 'none',
+          // https://developers.google.com/web/updates/2018/06/fresher-sw
+        }).then(function (registration) {
+          let refreshing;
+          navigator.serviceWorker.addEventListener('controllerchange',
+            function () {
+              if (refreshing) return;
+              refreshing = true;
+            //   window.location.reload();
+            }
+          );
+
+          if (registration.active) {
+            registration.active.addEventListener('message', function (msg) {
+              alert(msg);
+              location.reload();
+            });
+          }
+        }, function (err) {
+          // registration failed :(
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+        
+
+        function generateMessage() {
+            window.parent.postMessage("croppy is done!", "*")
+        }
+
+        function AlertIt(confirmText, destination) {
+            var answer = confirm(confirmText)
+            if (answer)
+                window.location = destination;
+        }
+
+        var processesFiles = async function (files) {
+
+            let len = files.length;
+            let fileObjects = []
+            //if images
+            if (len > 0) {
+                //clean up old images and show processing screen
+                // SetProcessing(true);
+                // imageHolder.innerHTML = '';
+
+                // for each file requested split them (files isn't an array)
+                let processedImagesLine = [];
+                let failedProcessing = false;
+
+                let firstFileName = files[0][0];
+                let extension_first_file = firstFileName.substring(1 + firstFileName.lastIndexOf('.'))
+                // DoSomeTrack("convert_start", extension_first_file, conversion_destination);
+
+
+                for (let fileIndex = 0; fileIndex < files.length; ++fileIndex) {
+                    let [fileName, content] = files[fileIndex];
+                    let fileNameNoExt = fileName.substring(0, fileName.lastIndexOf('.'));
+                    try {
+                        let destFilename = fileNameNoExt + '-%d.jpg'
+                        let splitFiles = await Magick.Call([{ 'name': fileName, 'content': content }],
+                            ["convert", fileName, "-flatten", "-resize", "800", "-crop", "800x1280", "-quality", "100", "-scene", "0", destFilename]);
+                        processedImagesLine.push(...splitFiles);
+                    }
+                    catch (e) {
+                        if (!failedProcessing) {
+                            failedProcessing = true;
+                            // DoSomeTrack("convert_failed", extension_first_file, conversion_destination);
+
+                            AlertIt("Error croppy could not format your file, old croppy may be up to the task, hit ok to go to https://old.croppy.duckdns.org", "https://old.croppy.duckdns.org");
+                        }
+                    }
+
+                }
+                fileObjects = processedImagesLine;
+                // let processedImages = processedImagesLine;
+                // for (let file of processedImages) {
+                //     let fileItem = file['blob'];
+                //     fileItem = fileItem.slice(0, fileItem.size, "image/jpeg");
+                //     fileItem.name = file['name'];
+                //     fileObjects.push(fileItem);
+                // }
+            }
+            window.parent.postMessage({ message: "croppy is done!", data: fileObjects }, "*");
+        }
+
+        // function receiveRequestMessage(event) {
+        //     // Do we trust the sender of this message?  (might be
+        //     // different from what we originally opened, for example).
+        //     if (event.origin !== "http://localhost:9999") {
+        //         return;
+        //     }
+
+        //     window.parent.postMessage("from_croppy: " + event.data, "*")
+
+        // }
+
+        // window.addEventListener('message', receiveRequestMessage, false);
+        function receiveRequestMessage(event) {
+            // Do we trust the sender of this message?  (might be
+            // different from what we originally opened, for example).
+            if (event.origin !== "https://www.webtoons.com") {
+                return;
+            }
+
+            processesFiles(event.data);
+
+        }
+        window.addEventListener('message', receiveRequestMessage, false);
+        // toastr.info('Loaded croppy extension');
+        alert('Loaded croppy extension');
+    </script>
+</body>
+
+</html>
