@@ -1,18 +1,24 @@
-# croppy-webtoon
-A bookmarklet and supporting files to update webtoon uploading to call croppy automatically.
+<!-- showdown makehtml -i readme.md -o .\webtoon_bookmarklet.html-->
+# Croppy-Webtoon
+A bookmarklet and supporting files to automatically convert and split your comics in the webtoon editor.
 
 # Installation
 ## Desktop
 1. Ensure the bookmark toolbar is enabled in your browser
+1. Drag folling link <a href="javascript:(function(){var jsCode = document.createElement('script');jsCode.setAttribute('type','module');jsCode.setAttribute('src', 'https://knicknic.github.io/croppy/add_webtoon_croppy.js');document.body.appendChild(jsCode);}());">webtoon croppy</a> to bookmark toolbar
+    * *use the mobile instructions if dragging doesn't work*
+<!--
 1. click the star or heart for this webpage
 1. right click on the new link in your favorites and type edit url
 1. enter the following as your location.
 ```
 javascript:(function(){var jsCode = document.createElement('script');jsCode.setAttribute('type','module');jsCode.setAttribute('src', 'https://knicknic.github.io/croppy/add_webtoon_croppy.js');document.body.appendChild(jsCode);}());
 ```
+-->
 
 ## Mobile
-Create a bookmark, and then update the location to 
+1. Create a bookmark for any page (this one)
+1. Update the location to
 ```
 javascript:(function(){var jsCode = document.createElement('script');jsCode.setAttribute('type','module');jsCode.setAttribute('src', 'https://knicknic.github.io/croppy/add_webtoon_croppy.js');document.body.appendChild(jsCode);}());
 ```
@@ -29,3 +35,5 @@ It is the same as mobile instructions, but you can watch someone walk through th
     1. You may have to wait a few seconds (up to 60 seconds)
         1. Currently there is not any loading logo when croppy is working
 
+
+Source code available at [GitHub](https://github.com/KnicKnic/croppy-webtoon).

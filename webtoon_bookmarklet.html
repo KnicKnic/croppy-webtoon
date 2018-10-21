@@ -1,0 +1,65 @@
+<html>
+
+<head>
+    <!-- <link rel="stylesheet" href="https://markdowncss.github.io/retro/css/retro.css"> -->
+    <!-- <link rel="stylesheet" href="https://markdowncss.github.io/splendor/css/splendor.css"> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.10.0/github-markdown.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.10.0/github-markdown.css">
+    <style>
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <article class="markdown-body">
+ <!-- showdown makehtml -i readme.md -o .\webtoon_bookmarklet.html-->
+<h1 id="croppywebtoon">Croppy-Webtoon</h1>
+<p>A bookmarklet and supporting files to automatically convert and split your comics in the webtoon editor.</p>
+<h1 id="installation">Installation</h1>
+<h2 id="desktop">Desktop</h2>
+<ol>
+<li>Ensure the bookmark toolbar is enabled in your browser</li>
+<li>Drag folling link <a href="javascript:(function(){var jsCode = document.createElement('script');jsCode.setAttribute('type','module');jsCode.setAttribute('src', 'https://knicknic.github.io/croppy/add_webtoon_croppy.js');document.body.appendChild(jsCode);}());">webtoon croppy</a> to bookmark toolbar<ul>
+<li><em>use the mobile instructions if dragging doesn't work</em></li></ul></li>
+</ol>
+<!--
+1. click the star or heart for this webpage
+1. right click on the new link in your favorites and type edit url
+1. enter the following as your location.<pre><code>javascript:(function(){var jsCode = document.createElement('script');jsCode.setAttribute('type','module');jsCode.setAttribute('src', 'https://knicknic.github.io/croppy/add_webtoon_croppy.js');document.body.appendChild(jsCode);}());
+</code></pre>
+-->
+<h2 id="mobile">Mobile</h2>
+<ol>
+<li>Create a bookmark for any page (this one)</li>
+<li>Update the location to</li>
+</ol>
+<pre><code>javascript:(function(){var jsCode = document.createElement('script');jsCode.setAttribute('type','module');jsCode.setAttribute('src', 'https://knicknic.github.io/croppy/add_webtoon_croppy.js');document.body.appendChild(jsCode);}());
+</code></pre>
+<h3 id="iphoneipadspecificinstructions">iPhone / iPad specific instructions</h3>
+<p>It is the same as mobile instructions, but you can watch someone walk through the steps for their project in the following video.</p>
+<p><a href="https://www.youtube.com/watch?v=XlhENZAoDzk">Example video</a> but use the location from the mobile section.</p>
+<h1 id="usage">Usage</h1>
+<ol>
+<li>Go to the webtoon episode upload page. </li>
+<li>Click the bookmark you saved (every time you load the page)</li>
+<li>Dismiss popup or toast notification saying <code>Loaded croppy extension</code>.</li>
+<li>Add larger files / longer files<ol>
+<li>You may have to wait a few seconds (up to 60 seconds)<ol>
+<li>Currently there is not any loading logo when croppy is working</li></ol></li></ol></li>
+</ol>
+<p>Source code available at <a href="https://github.com/KnicKnic/croppy-webtoon">GitHub</a>.</p>
+</article>
+</body>
+
+</html>
