@@ -5,7 +5,7 @@ A bookmarklet and supporting files to automatically convert and split your comic
 # Installation
 ## Desktop
 1. Ensure the bookmark toolbar is enabled in your browser
-1. Drag folling link <a href="javascript:(function(){var jsCode = document.createElement('script');jsCode.setAttribute('type','module');jsCode.setAttribute('src', 'https://knicknic.github.io/croppy/add_webtoon_croppy.js');document.body.appendChild(jsCode);}());">webtoon croppy</a> to bookmark toolbar
+1. Drag following link <a href="javascript:(function(){var jsCode = document.createElement('script');jsCode.setAttribute('type','module');jsCode.setAttribute('src', 'https://knicknic.github.io/croppy/add_webtoon_croppy.js');document.body.appendChild(jsCode);}());">webtoon croppy</a> to bookmark toolbar
     * *use the mobile instructions if dragging doesn't work*
 <!--
 1. click the star or heart for this webpage
