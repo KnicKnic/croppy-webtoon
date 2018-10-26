@@ -26,6 +26,25 @@ THE SOFTWARE.
 */
 
 
+//   var _paq = _paq || [];
+//   /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+//   _paq.push(['trackPageView']);
+//   _paq.push(['enableLinkTracking']);
+//   (function() {
+//     var u="https://stat.croppy.duckdns.org/";
+//     _paq.push(['setTrackerUrl', u+'findphp']);
+//     _paq.push(['setSiteId', '3']);
+//     var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+//     g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'findjs'; s.parentNode.insertBefore(g,s);
+//   })();
+
+
+//   function DoSomeTrack(category, action, name){
+//     try{
+//       _paq.push(['trackEvent', category, action, name]);        
+//     }catch(e){console.log(e)}
+//   }
+
 export function _uploadFileForHTML5(oProp) {
     var oFile = oProp.file;
     var sKey = oProp.key;
@@ -57,8 +76,14 @@ export function _uploadFileForHTML5(oProp) {
             return
         }
         if (oXHR.status === 200) {
+            let  logString = "UploadLoad, sKey: " + sKey + ", oFile: " + oFile.name + ",  oFile.size: " + oFile.size + ", state: " + this._states.LOAD + ", response: " + oXHR.responseText;
+            console.log(logString); 
+            // DoSomeTrack("webtoon", "upload_success", logString);
             this._setDoneState(sKey, oFile, "uploadLoad", oFile.size, 1, this._states.LOAD, oXHR.responseText)
         } else {
+            let logString = "UploadError, sKey: "+  sKey + ", oFile: " + oFile.name + ", status: " + oXHR.status;
+            console.log(logString); 
+            // DoSomeTrack("webtoon", "upload_fail", logString);
             this._setDoneState(sKey, oFile, "uploadError", 0, 0, this._states.ERROR)
         }
     }, this);

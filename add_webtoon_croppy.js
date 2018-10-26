@@ -1,4 +1,10 @@
 //javascript:(function(){var jsCode = document.createElement('script');jsCode.setAttribute('type','module');jsCode.setAttribute('src', 'https://knicknic.github.io/croppy/add_webtoon_croppy.js');document.body.appendChild(jsCode);}());
+//https://www.webtoons.com/en/challenge/spirit-contact/promo/viewer?title_no=233314&episode_no=1
+
+// import the webtoon code that was modified
+// kept in another file due to licensing
+import * as Webtoon from 'https://knicknic.github.io/croppy/webtoon.js';
+UploadQueue.prototype._uploadFileForHTML5 = Webtoon._uploadFileForHTML5
 
 function receiveCroppyMessage(event) {
     // Do we trust the sender of this message?  (might be
@@ -70,8 +76,9 @@ var processFiles = async function (files) {
     // When the control has changed, there are new files
 
     let len = files.length;
-    //if images
     let toProcess = []
+
+    //if images
     if (len > 0) {
         for (let fileIndex = 0; fileIndex < files.length; ++fileIndex) {
             let [fileName, content] = await ReadFile(files[fileIndex]);
@@ -103,6 +110,7 @@ UploadQueue.prototype._addQueue = function(files) {
         for (var i = 0; i < files.length; i++) {
             arrayFiles.push(files[i]);
         }
+        this.options.nParallel = 1;
         processFilePromise = CreatePromiseEvent();
         let process = processFiles(arrayFiles);
         processFilePromise.then(files => {
@@ -120,7 +128,3 @@ UploadQueue.prototype._addQueue = function(files) {
 };
 
 
-// import the webtoon code that was modified
-// kept in another file due to licensing
-import * as Webtoon from 'https://knicknic.github.io/croppy/webtoon.js';
-UploadQueue.prototype._uploadFileForHTML5 = Webtoon._uploadFileForHTML5
