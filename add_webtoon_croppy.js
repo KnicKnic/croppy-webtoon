@@ -1,11 +1,6 @@
 //javascript:(function(){var jsCode = document.createElement('script');jsCode.setAttribute('type','module');jsCode.setAttribute('src', 'https://knicknic.github.io/croppy/add_webtoon_croppy.js');document.body.appendChild(jsCode);}());
 //https://www.webtoons.com/en/challenge/spirit-contact/promo/viewer?title_no=233314&episode_no=1
 
-// import the webtoon code that was modified
-// kept in another file due to licensing
-import * as Webtoon from 'https://knicknic.github.io/croppy/webtoon.js';
-UploadQueue.prototype._uploadFileForHTML5 = Webtoon._uploadFileForHTML5
-
 function receiveCroppyMessage(event) {
     // Do we trust the sender of this message?  (might be
     // different from what we originally opened, for example).
@@ -16,8 +11,10 @@ function receiveCroppyMessage(event) {
     let fileObjects = []
     for (let file of event.data['data']) {
         let fileItem = file['blob'];
-        fileItem = fileItem.slice(0, fileItem.size, "image/jpeg");
-        fileItem.name = file['name'];
+        fileItem = new File([fileItem], file['name'], {
+            type: "image/jpeg",
+          });
+        // fileItem.name = file['name'];
         fileObjects.push(fileItem);
     }
 
@@ -30,19 +27,16 @@ function receiveCroppyMessage(event) {
     processFilePromise['resolve'](fileObjects);
 }
 window.addEventListener('message', receiveCroppyMessage, false);
-
+var processFilePromise = CreatePromiseEvent();
 
 var iframe = document.createElement('iframe');
 // iframe.style.display = "none";
 iframe.src = 'https://knicknic.github.io/croppy/webtoon_croppy.html';
 document.body.appendChild(iframe);
 
-
-
 function DoSend() {
     iframe.contentWindow.postMessage('host', '*')
 }
-
 
 function CreatePromiseEvent() {
     let resolver;
@@ -73,6 +67,7 @@ function ReadFile(file) {
 };
 // handle new images to process
 var processFiles = async function (files) {
+    processFilePromise = CreatePromiseEvent();
     // When the control has changed, there are new files
 
     let len = files.length;
@@ -86,45 +81,66 @@ var processFiles = async function (files) {
         }
     }
     iframe.contentWindow.postMessage(toProcess, '*')
+    return await processFilePromise
 };
 
-var browseButtonInstance = [];
-BrowseButton.prototype._oldGetFiles = BrowseButton.prototype.getFiles
-BrowseButton.prototype.getFiles = function (){
-    browseButtonInstance = this;
-    return this._oldGetFiles();
+
+if( window.location.hostname == 'tapas.io')
+{
+    alert('not supported on tapas yet')
+
+    // // convert user file list into file array
+    // let arrayFiles = []
+    // for (var i = 0; i < files.length; i++) {
+    //     arrayFiles.push(files[i]);
+    // }
+
+    // // promise that has chunked files
+    // processFiles(arrayFiles).then(files => {
+    //     ret = oldUploadCode(files);        
+    // });
+
+}
+else
+{
+    var browseButtonInstance = [];
+    BrowseButton.prototype._oldGetFiles = BrowseButton.prototype.getFiles
+    BrowseButton.prototype.getFiles = function (){
+        browseButtonInstance = this;
+        return this._oldGetFiles();
+    }
+
+    UploadQueue.prototype._oldQueue = UploadQueue.prototype._addQueue;
+
+    //update code such that only working if doing upload queue. look at elements in self
+    UploadQueue.prototype._addQueue = function(files) {
+        var ret = true;
+        var self = this;
+
+        // do not want to convert thumbnail code
+        if(this._episodeObject._episodeUploadQueue == this)
+        {
+            this.options.nParallel = 1;
+            let arrayFiles = []
+            for (var i = 0; i < files.length; i++) {
+                arrayFiles.push(files[i]);
+            }
+
+            processFiles(arrayFiles).then(files => {
+                ret = self._oldQueue(files);
+                
+                var fileSelect = browseButtonInstance.getFileSelect().get(0);
+                fileSelect.value = "";
+            });
+        }
+        else
+        {
+            ret = self._oldQueue(files);
+        }
+        return ret;
+    };
 }
 
-UploadQueue.prototype._oldQueue = UploadQueue.prototype._addQueue;
-var processFilePromise = CreatePromiseEvent();
 
-//update code such that only working if doing upload queue. look at elements in self
-UploadQueue.prototype._addQueue = function(files) {
-    var ret = true;
-    var self = this;
-
-    // do not want to convert thumbnail code
-    if(this._episodeObject._episodeUploadQueue == this)
-    {
-        let arrayFiles = []
-        for (var i = 0; i < files.length; i++) {
-            arrayFiles.push(files[i]);
-        }
-        this.options.nParallel = 1;
-        processFilePromise = CreatePromiseEvent();
-        let process = processFiles(arrayFiles);
-        processFilePromise.then(files => {
-            ret = self._oldQueue(files);
-            
-            var fileSelect = browseButtonInstance.getFileSelect().get(0);
-            fileSelect.value = "";
-        });
-    }
-    else
-    {
-        ret = self._oldQueue(files);
-    }
-    return ret;
-};
 
 
