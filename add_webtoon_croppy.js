@@ -85,21 +85,14 @@ var processFiles = async function (files) {
 };
 
 
-if( window.location.hostname == 'tapas.io')
+if( window.location.hostname == 'tapas.io' && typeof panda === 'object')
 {
-    alert('not supported on tapas yet')
-
-    // // convert user file list into file array
-    // let arrayFiles = []
-    // for (var i = 0; i < files.length; i++) {
-    //     arrayFiles.push(files[i]);
-    // }
-
-    // // promise that has chunked files
-    // processFiles(arrayFiles).then(files => {
-    //     ret = oldUploadCode(files);        
-    // });
-
+    panda.preUploadingHook = function (files, cb) {
+        //can add a loading animation here. 
+        processFiles(files).then(pFiles => {
+            cb.call(this, pFiles);
+        });
+    }
 }
 else
 {
