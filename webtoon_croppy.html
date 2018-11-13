@@ -102,7 +102,7 @@
                 window.location = destination;
         }
 
-        var processesFiles = async function (files) {
+        var processesFiles = async function (files, site) {
 
             let len = files.length;
             let fileObjects = []
@@ -114,35 +114,42 @@
                 // imageHolder.innerHTML = '';
 
                 // for each file requested split them (files isn't an array)
-                let processedImagesLine = [];
+                let processedImages = [];
                 let failedProcessing = false;
 
                 let firstFileName = files[0][0];
                 let extension_first_file = firstFileName.substring(1 + firstFileName.lastIndexOf('.'))
-                DoSomeTrack("convert_start", extension_first_file, 'Line');
+                DoSomeTrack("convert_start", extension_first_file, site);
 
 
                 for (let fileIndex = 0; fileIndex < files.length; ++fileIndex) {
                     let [fileName, content] = files[fileIndex];
                     let fileNameNoExt = fileName.substring(0, fileName.lastIndexOf('.'));
                     try {
-                        let destFilename = fileNameNoExt + '-%d.jpg'
-                        let splitFiles = await Magick.Call([{ 'name': fileName, 'content': content }],
-                            ["convert", fileName, "-flatten", "-resize", "800", "-crop", "800x1280", "-quality", "100", "-scene", "0", destFilename]);
-                        processedImagesLine.push(...splitFiles);
+                        if (site == 'Line') {
+                            let destFilename = fileNameNoExt + '-%d.jpg'
+                            let splitFiles = await Magick.Call([{ 'name': fileName, 'content': content }],
+                                ["convert", fileName, "-flatten", "-resize", "800", "-crop", "800x1280", "-quality", "100", "-scene", "0", destFilename]);
+                            processedImages.push(...splitFiles);
+                        } else if (site == 'Tapas') {
+                            let destFilename = fileNameNoExt + '-%d.png'
+                            let splitFiles = await Magick.Call([{ 'name': fileName, 'content': content }],
+                                ["convert", fileName, "-flatten", "-resize", ">940", "-crop", "x1280", "-quality", "100", "-scene", "0", destFilename]);
+                            processedImages.push(...splitFiles);
+                        }
                     }
                     catch (e) {
                         if (!failedProcessing) {
                             failedProcessing = true;
-                            DoSomeTrack("convert_failed", extension_first_file, 'Line');
+                            DoSomeTrack("convert_failed", extension_first_file, site);
 
                             AlertIt("Error croppy could not format your file, old croppy may be up to the task, hit ok to go to https://old.croppy.duckdns.org", "https://old.croppy.duckdns.org");
                         }
                     }
                 }
-                fileObjects = processedImagesLine;
+                fileObjects = processedImages;
                 
-                CompletedImage("convert_complete", extension_first_file, 'Line');
+                CompletedImage("convert_complete", extension_first_file, site);
             }
             window.parent.postMessage({ message: "croppy is done!", data: fileObjects }, "*");
         }
@@ -153,12 +160,20 @@
                 return;
             }
 
-            processesFiles(event.data);
+            let files = event.data.files;
+            let site = event.data.site;
+            if(files === 'undefined')
+            {
+                files = event.data;
+                site = 'Line';
+            }
+            
+            processesFiles(files, site);
 
         }
         window.addEventListener('message', receiveRequestMessage, false);
         // toastr.info('Loaded croppy extension');
-        alert('Loaded croppy extension');
+        alert('Loaded croppy extension for Webtoons & Tapas.');
     </script>
 </body>
 

@@ -66,10 +66,10 @@ function ReadFile(file) {
     return readFile;
 };
 // handle new images to process
-var processFiles = async function (files) {
+var processFiles = async function (fileList, site) {
     processFilePromise = CreatePromiseEvent();
     // When the control has changed, there are new files
-
+    let files = Array.from(fileList);
     let len = files.length;
     let toProcess = []
 
@@ -80,7 +80,7 @@ var processFiles = async function (files) {
             toProcess.push([fileName, content]);
         }
     }
-    iframe.contentWindow.postMessage(toProcess, '*')
+    iframe.contentWindow.postMessage({files: toProcess, site: site}, '*')
     return await processFilePromise
 };
 
@@ -89,7 +89,7 @@ if( window.location.hostname == 'tapas.io' && typeof panda === 'object')
 {
     panda.preUploadingHook = function (files, cb) {
         //can add a loading animation here. 
-        processFiles(files).then(pFiles => {
+        processFiles(files, 'Tapas').then(pFiles => {
             cb.call(this, pFiles);
         });
     }
@@ -114,12 +114,8 @@ else
         if(this._episodeObject._episodeUploadQueue == this)
         {
             this.options.nParallel = 1;
-            let arrayFiles = []
-            for (var i = 0; i < files.length; i++) {
-                arrayFiles.push(files[i]);
-            }
 
-            processFiles(arrayFiles).then(files => {
+            processFiles(files, 'Line').then(files => {
                 ret = self._oldQueue(files);
                 
                 var fileSelect = browseButtonInstance.getFileSelect().get(0);
